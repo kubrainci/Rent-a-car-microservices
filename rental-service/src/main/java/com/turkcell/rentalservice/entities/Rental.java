@@ -17,9 +17,9 @@ import java.time.LocalDate;
 public class Rental {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    Integer id;
-    @Column(name = "rentalDate")
+    @Column(name = "rental_id")
+    Integer rentalId;
+    @Column(name = "rental_date")
     LocalDate rentalDate;
     @Column(name = "inventory_code")
     private String inventoryCode;

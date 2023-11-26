@@ -1,14 +1,13 @@
-package com.turkcell.carservice;
+package com.turkcell.customerservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CarServiceApplication {
+public class CustomerServiceApplication {
 
 	public static void main(String[] args) {
-
-		SpringApplication.run(CarServiceApplication.class, args);
+		SpringApplication.run(CustomerServiceApplication.class, args);
 	}
 
 }

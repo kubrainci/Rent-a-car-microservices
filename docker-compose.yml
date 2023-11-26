@@ -1,45 +1,53 @@
-services:
+ services:
+  discovery-server:
+    build: ./discovery-server
+    ports:
+      - 8761:8761
+
   api-gateway:
-    image: rent-a-car-api-gateway
+    build: ./api-gateway
     ports:
       - 9999:9999
     environment:
       - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
     depends_on:
       - discovery-server
-      - keycloak
-
-  discovery-server:
-    image: rent-a-car-discovery-server
-    ports:
-      - 8761:8761
-    environment:
-      - eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
-    mem_limit: 700m
 
   car-service:
-    image: rent-a-car-car-service
+    build: ./car-service
     ports:
       - 6002:6002
     environment:
       - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
       - spring.data.mongodb.uri=mongodb://root:root@mongodb:27017/car-service?authSource=admin
-    mem_limit: 700m
     depends_on:
       - discovery-server
       - mongodb
+      - api-gateway
 
   rental-service:
-    image: rent-a-car-rental-service
+    build: ./rental-service
     ports:
       - 6001:6001
     environment:
       - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
       - spring.datasource.url=jdbc:postgresql://postgres:5432/rental-service
-    mem_limit: 700m
     depends_on:
       - discovery-server
       - postgres
+      - api-gateway
+
+  customer-service:
+    build: ./customer-service
+    ports:
+      - 6003:6003
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
+      - spring.datasource.url=jdbc:postgresql://postgres:5432/customer-service
+    depends_on:
+      - discovery-server
+      - postgres
+      - api-gateway
 
   mongodb:
     image: mongo
@@ -52,20 +60,39 @@ services:
 
   postgres:
     image: postgres
+    restart: always
     environment:
       POSTGRES_DB: rental-service
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 12345
+      POSTGRES_INITDB_ARGS: "--locale=en_US.utf8"
     ports:
       - 5432:5432
 
-  keycloak:
-    image: quay.io/keycloak/keycloak
+  zookeeper:
+    image: confluentinc/cp-zookeeper
     ports:
-      - 8080:8080
-    mem_limit: 700m
+      - 2181:2181
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-    command:
-      - start-dev
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  kafka-manager:
+    image: hlebalbau/kafka-manager
+    ports:
+      - 9000:9000
+    environment:
+      ZK_HOSTS: zookeeper:2181
+    depends_on:
+      - kafka
