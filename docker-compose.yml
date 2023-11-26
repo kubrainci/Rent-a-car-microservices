@@ -1,54 +1,54 @@
+# services:
+#  discovery-server:
+#    build: ./discovery-server
+#    ports:
+#      - 8761:8761
+#
+#  api-gateway:
+#    build: ./api-gateway
+#    ports:
+#      - 9999:9999
+#    environment:
+#      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
+#    depends_on:
+#      - discovery-server
+#
+#  car-service:
+#    build: ./car-service
+#    ports:
+#      - 6002:6002
+#    environment:
+#      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
+#      - spring.data.mongodb.uri=mongodb://root:root@mongodb:27017/car-service?authSource=admin
+#    depends_on:
+#      - discovery-server
+#      - mongodb
+#      - api-gateway
+#
+#  rental-service:
+#    build: ./rental-service
+#    ports:
+#      - 6001:6001
+#    environment:
+#      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
+#      - spring.datasource.url=jdbc:postgresql://postgres:5432/rental-service
+#    depends_on:
+#      - discovery-server
+#      - postgres
+#      - api-gateway
+#
+#  customer-service:
+#    build: ./customer-service
+#    ports:
+#      - 6003:6003
+#    environment:
+#      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
+#      - spring.datasource.url=jdbc:postgresql://postgres:5432/customer-service
+#    depends_on:
+#      - discovery-server
+#      - postgres
+#      - api-gateway
  services:
-  discovery-server:
-    build: ./discovery-server
-    ports:
-      - 8761:8761
-
-  api-gateway:
-    build: ./api-gateway
-    ports:
-      - 9999:9999
-    environment:
-      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
-    depends_on:
-      - discovery-server
-
-  car-service:
-    build: ./car-service
-    ports:
-      - 6002:6002
-    environment:
-      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
-      - spring.data.mongodb.uri=mongodb://root:root@mongodb:27017/car-service?authSource=admin
-    depends_on:
-      - discovery-server
-      - mongodb
-      - api-gateway
-
-  rental-service:
-    build: ./rental-service
-    ports:
-      - 6001:6001
-    environment:
-      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
-      - spring.datasource.url=jdbc:postgresql://postgres:5432/rental-service
-    depends_on:
-      - discovery-server
-      - postgres
-      - api-gateway
-
-  customer-service:
-    build: ./customer-service
-    ports:
-      - 6003:6003
-    environment:
-      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
-      - spring.datasource.url=jdbc:postgresql://postgres:5432/customer-service
-    depends_on:
-      - discovery-server
-      - postgres
-      - api-gateway
-
   mongodb:
     image: mongo
     restart: always

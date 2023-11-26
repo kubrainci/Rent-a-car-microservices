@@ -1,5 +1,7 @@
 package com.turkcell.carservice.entities;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,12 +10,13 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
-@Document(value = "cars")
+@Document(collection = "cars")
 public class Car {
     @Id
     private String objectId;
@@ -23,6 +26,9 @@ public class Car {
     private String colour;
     private short modelYear;
     private Double dailyPrice;
-    private String photo;
+
+    @OneToMany(mappedBy = "cars", cascade = CascadeType.ALL)
+    private List<Image> images;
+
     private Boolean state;
 }
