@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.turkcell.carservice.services.abstracts.CloudinaryService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class CloudinaryManager implements CloudinaryService {
@@ -14,8 +15,10 @@ public class CloudinaryManager implements CloudinaryService {
 
 
 
+
+
     @Override
-    public String uploadFile(String folderName) {
+    public String uploadFile(MultipartFile file, String folderName) {
         return null;
     }
 }
