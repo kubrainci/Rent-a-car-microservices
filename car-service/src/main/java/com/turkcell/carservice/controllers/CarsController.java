@@ -21,28 +21,38 @@ public class CarsController {
     }
 
     @PutMapping("/inventoryCode")
-    public void update(@RequestParam String inventoryCode,@RequestBody CreateCarRequestDto request) {
-       carService.update(inventoryCode,request);
+    public void update(@RequestParam String inventoryCode, @RequestBody CreateCarRequestDto request) {
+        carService.update(inventoryCode, request);
     }
-    @DeleteMapping
-    public void delete(String inventoryCode){
-        carService.delete(inventoryCode);
 
+    @DeleteMapping
+    public void delete(String inventoryCode) {
+        carService.delete(inventoryCode);
     }
 
     @GetMapping
-        public List<Car> getAll(){
+    public List<Car> getAll() {
         return carService.getAll();
     }
 
     @GetMapping("/getByInventoryCode")
-    public Car getByInventoryCode(@RequestParam String inventoryCode){
+    public Car getByInventoryCode(@RequestParam String inventoryCode) {
         return carService.getByInventoryCode(inventoryCode);
     }
 
-    @GetMapping("/getState")
-    public Boolean getState(@RequestParam String inventoryCode){
+    @GetMapping("/getStateByInventoryCode")
+    public Boolean getStateByInventoryCode(@RequestParam String inventoryCode) {
         return carService.getStateByInventoryCode(inventoryCode);
+    }
+
+    @GetMapping("/getDailyPriceByInventoryCode")
+    public Double getDailyPriceByInventoryCode(@RequestParam String inventoryCode) {
+        return carService.getDailyPriceByInventoryCode(inventoryCode);
+    }
+
+    @PostMapping("/updateState")
+    public Boolean updateState(@RequestParam String inventoryCode, @RequestParam Boolean state) {
+        return carService.updateState(inventoryCode, state);
     }
 
 

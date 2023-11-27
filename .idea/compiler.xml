@@ -13,10 +13,10 @@
         <module name="test-service" />
         <module name="rental-service" />
         <module name="car-service" />
+        <module name="notification-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="notification-service" target="17" />
       <module name="rental-service (1)" target="17" />
       <module name="rental-service (2)" target="17" />
     </bytecodeTargetLevel>

@@ -71,7 +71,6 @@ public class CarManager implements CarService {
         return false;
     }
 
-    @Override
     public List<Image> getImagesByInventoryCode(String inventoryCode) {
         Car car = getByInventoryCode(inventoryCode);
         return car.getImages();
@@ -90,8 +89,6 @@ public class CarManager implements CarService {
         car = carRepository.save(car);
         return car.getState();
     }
-
-
 
 
 }

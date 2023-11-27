@@ -88,7 +88,7 @@ public class RentalManager implements RentalService {
       kafkaTemplate.send(
               "notificationTopic",
               " Aracı kiralama işleminiz başarılı olmuştur, aracı teslim almak icin bugün saat 22:00'a kadar müracaat ediniz. ");
-      return "Arac kiralandi";
-    } else return "Arac kiralamaya uygun degil";
+      return "Araç kiralandı";
+    } else return "Araç kiralamaya uygun değildir.";
   }
 }
