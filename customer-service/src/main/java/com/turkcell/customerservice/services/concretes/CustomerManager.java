@@ -2,11 +2,16 @@ package com.turkcell.customerservice.services.concretes;
 
 import com.turkcell.customerservice.entities.Customer;
 import com.turkcell.customerservice.entities.requests.CustomerAddRequest;
+import com.turkcell.customerservice.entities.requests.CustomerUpdateRequest;
 import com.turkcell.customerservice.entities.responses.CustomerAddResponse;
+import com.turkcell.customerservice.entities.responses.CustomerGetResponse;
+import com.turkcell.customerservice.entities.responses.CustomerUpdateResponse;
 import com.turkcell.customerservice.repositories.CustomerRepository;
 import com.turkcell.customerservice.services.abstracts.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +40,26 @@ public class CustomerManager implements CustomerService {
                         .username(customer.getUserName())
                         .build();
         return customerAddResponse;
+    }
+
+    @Override
+    public void delete(int id) {
+        customerRepository.deleteById(id);
+    }
+
+    @Override
+    public CustomerUpdateResponse update(int id, CustomerUpdateRequest update) {
+        return null;
+    }
+
+    @Override
+    public List<CustomerGetResponse> getAll() {
+        return null;
+    }
+
+    @Override
+    public CustomerGetResponse getById(int id) {
+        return null;
     }
 
     @Override
