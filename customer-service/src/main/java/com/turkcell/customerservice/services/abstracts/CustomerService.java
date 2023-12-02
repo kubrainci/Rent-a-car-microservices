@@ -14,7 +14,7 @@ public interface CustomerService {
 
     void delete(int id);
 
-    CustomerUpdateResponse update(int id, CustomerUpdateRequest update);
+    CustomerUpdateResponse update(int id, CustomerUpdateRequest request);
 
     List<CustomerGetResponse> getAll();
 

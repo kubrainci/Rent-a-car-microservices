@@ -18,6 +18,7 @@ import java.util.List;
 @Data
 @Document(collection = "cars")
 public class Car {
+
     @Id
     private String objectId;
     private String inventoryCode;

@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 @Document(collection = "images")
 public class Image {
+
     @Id
     private String objectId;
     private String name;

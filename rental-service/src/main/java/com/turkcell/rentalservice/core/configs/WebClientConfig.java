@@ -1,4 +1,4 @@
-package com.turkcell.rentalservice.configs;
+package com.turkcell.rentalservice.core.configs;
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;

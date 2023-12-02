@@ -1,9 +1,12 @@
 package com.turkcell.carservice.controllers;
 
 import com.turkcell.carservice.entities.Car;
-import com.turkcell.carservice.entities.dtos.requests.CreateCarRequestDto;
-import com.turkcell.carservice.entities.dtos.responses.CreatedCarResponseDto;
+import com.turkcell.carservice.entities.dtos.requests.CarAddRequest;
+import com.turkcell.carservice.entities.dtos.responses.CarAddResponse;
+import com.turkcell.carservice.entities.dtos.responses.CarGetResponse;
+import com.turkcell.carservice.entities.dtos.responses.CarUpdateResponse;
 import com.turkcell.carservice.services.abstracts.CarService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,22 +19,25 @@ public class CarsController {
     private final CarService carService;
 
     @PostMapping
-    public void add(@RequestBody CreateCarRequestDto request) {
-        carService.add(request);
+    public CarAddResponse add(@RequestBody @Valid CarAddRequest request) {
+
+      return carService.add(request);
     }
 
     @PutMapping("/inventoryCode")
-    public void update(@RequestParam String inventoryCode, @RequestBody CreateCarRequestDto request) {
-        carService.update(inventoryCode, request);
+    public CarUpdateResponse update(@RequestParam String inventoryCode, @RequestBody @Valid CarAddRequest request) {
+       return carService.update(inventoryCode, request);
     }
 
     @DeleteMapping
     public void delete(String inventoryCode) {
+
         carService.delete(inventoryCode);
     }
 
     @GetMapping
-    public List<Car> getAll() {
+    public List<CarGetResponse> getAll() {
+
         return carService.getAll();
     }
 

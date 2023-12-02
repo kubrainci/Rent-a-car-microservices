@@ -9,6 +9,7 @@ import com.turkcell.customerservice.entities.responses.CustomerUpdateResponse;
 import com.turkcell.customerservice.repositories.CustomerRepository;
 import com.turkcell.customerservice.services.abstracts.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,27 +19,14 @@ import java.util.List;
 public class CustomerManager implements CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public CustomerAddResponse register(CustomerAddRequest request) {
-        Customer customer =
-                Customer.builder()
-                        .name(request.getName())
-                        .email(request.getEmail())
-                        .userName(request.getUsername())
-                        .lastName(request.getLastName())
-                        .password(request.getPassword())
-                        .balance(0)
-                        .build();
-        customerRepository.save(customer);
+        Customer customerForAutoMapping = modelMapper.map(request, Customer.class);
+        customerForAutoMapping = customerRepository.save(customerForAutoMapping);
         CustomerAddResponse customerAddResponse =
-                CustomerAddResponse.builder()
-                        .id(customer.getId())
-                        .name(customer.getName())
-                        .email(customer.getEmail())
-                        .lastName(customer.getLastName())
-                        .username(customer.getUserName())
-                        .build();
+                modelMapper.map(customerForAutoMapping, CustomerAddResponse.class);
         return customerAddResponse;
     }
 
@@ -48,18 +36,29 @@ public class CustomerManager implements CustomerService {
     }
 
     @Override
-    public CustomerUpdateResponse update(int id, CustomerUpdateRequest update) {
-        return null;
+    public CustomerUpdateResponse update(int id, CustomerUpdateRequest request) {
+        Customer customer = customerRepository.getReferenceById(id);
+        modelMapper.map(request,customer);
+        customer = customerRepository.save(customer);
+
+        CustomerUpdateResponse customerUpdateResponse =
+                modelMapper.map(customer, CustomerUpdateResponse.class);
+        return customerUpdateResponse;
     }
 
     @Override
     public List<CustomerGetResponse> getAll() {
-        return null;
+        List<Customer> customers = customerRepository.findAll();
+        List<CustomerGetResponse> customerGetResponses =
+                customers.stream().map(item -> modelMapper.map(item, CustomerGetResponse.class)).toList();
+        return customerGetResponses;
     }
 
     @Override
     public CustomerGetResponse getById(int id) {
-        return null;
+        Customer customer = customerRepository.getReferenceById(id);
+        CustomerGetResponse customerGetResponse = modelMapper.map(customer, CustomerGetResponse.class);
+        return customerGetResponse;
     }
 
     @Override

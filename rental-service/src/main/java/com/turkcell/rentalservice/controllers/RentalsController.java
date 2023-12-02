@@ -1,9 +1,15 @@
 package com.turkcell.rentalservice.controllers;
 
 
+import com.turkcell.rentalservice.entities.dtos.requests.RentalUpdateRequest;
+import com.turkcell.rentalservice.entities.dtos.requests.SubmitRentalDto;
+import com.turkcell.rentalservice.entities.dtos.responses.RentalGetResponse;
+import com.turkcell.rentalservice.entities.dtos.responses.RentalUpdateResponse;
 import com.turkcell.rentalservice.services.abstracts.RentalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/api/rentals")
 @RestController
@@ -11,9 +17,29 @@ import org.springframework.web.bind.annotation.*;
   public class RentalsController {
   private final RentalService rentalService;
 
-  @GetMapping("/submitRental")
-  public String submitRental(@RequestParam String inventoryCode, @RequestParam int customerId) {
-    return rentalService.submitRental(inventoryCode, customerId);
+  @PostMapping("/submitRental")
+  public String submitRental(@RequestBody SubmitRentalDto submitRentalDto) {
+    return rentalService.submitRental(submitRentalDto);
+  }
+
+  @DeleteMapping
+  public void delete(int id){
+    rentalService.delete(id);
+  }
+
+  @PutMapping
+  public RentalUpdateResponse update(@RequestParam int id,@RequestBody RentalUpdateRequest request){
+    return rentalService.update(id, request);
+  }
+
+  @GetMapping
+  public RentalGetResponse getById(int id){
+    return rentalService.getById(id);
+  }
+
+  @GetMapping
+  public List<RentalGetResponse> getAll(){
+    return rentalService.getAll();
   }
 
 }

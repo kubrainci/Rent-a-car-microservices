@@ -2,10 +2,14 @@ package com.turkcell.carservice.services.concretes;
 
 import com.turkcell.carservice.entities.Car;
 import com.turkcell.carservice.entities.Image;
-import com.turkcell.carservice.entities.dtos.requests.CreateCarRequestDto;
+import com.turkcell.carservice.entities.dtos.requests.CarAddRequest;
+import com.turkcell.carservice.entities.dtos.responses.CarAddResponse;
+import com.turkcell.carservice.entities.dtos.responses.CarGetResponse;
+import com.turkcell.carservice.entities.dtos.responses.CarUpdateResponse;
 import com.turkcell.carservice.repositories.CarRepository;
 import com.turkcell.carservice.services.abstracts.CarService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,34 +20,28 @@ import java.util.List;
 public class CarManager implements CarService {
 
     private final CarRepository carRepository;
+    private final ModelMapper modelMapper;
 
     @Override
-    public void add(CreateCarRequestDto request) {
-        Car car =
-                Car.builder()
-                        .inventoryCode(request.getInventoryCode())
-                        .brand(request.getBrand())
-                        .model(request.getModel())
-                        .colour(request.getColour())
-                        .modelYear(request.getModelYear())
-                        .dailyPrice(request.getDailyPrice())
-                        .state(request.getState())
-                        .build();
-        carRepository.save(car);
+    public CarAddResponse add(CarAddRequest request) {
+        Car carFromAutoMapping = modelMapper.map(request, Car.class);
+        carFromAutoMapping = carRepository.save(carFromAutoMapping);
+
+        // Ekleme islemimizin sonucunu göstermek için responce
+        CarAddResponse carAddResponse = modelMapper.map(carFromAutoMapping, CarAddResponse.class);
+        return carAddResponse;
     }
 
     @Override
-    public void update(String inventoryCode, CreateCarRequestDto request) {
-        Car car = carRepository.findByInventoryCode(inventoryCode);
-        car.setBrand(request.getBrand());
-        car.setModel(request.getModel());
-        car.setModelYear(request.getModelYear());
-        car.setColour(request.getColour());
-        car.setInventoryCode(request.getInventoryCode());
+    public CarUpdateResponse update(String inventoryCode, CarAddRequest request) {
+        Car car = modelMapper.map(request, Car.class);
         car.setDailyPrice(request.getDailyPrice());
         car.setImages(new ArrayList<>());
         car.setState(request.getState());
-        carRepository.save(car);
+        car = carRepository.save(car);
+
+        CarUpdateResponse carUpdateResponse = modelMapper.map(car, CarUpdateResponse.class);
+        return carUpdateResponse;
     }
 
     @Override
@@ -53,12 +51,17 @@ public class CarManager implements CarService {
     }
 
     @Override
-    public List<Car> getAll() {
-        return carRepository.findAll();
+    public List<CarGetResponse> getAll() {
+
+        List<Car> cars = carRepository.findAll();
+        List<CarGetResponse> carGetResponses =
+                cars.stream().map(item -> modelMapper.map(item, CarGetResponse.class)).toList();
+        return carGetResponses;
     }
 
     @Override
     public Car getByInventoryCode(String inventoryCode) {
+
         return carRepository.findByInventoryCode(inventoryCode);
     }
 
@@ -88,6 +91,13 @@ public class CarManager implements CarService {
         car.setState(state);
         car = carRepository.save(car);
         return car.getState();
+    }
+
+    public Car updateImageByInventoryCode(String inventoryCode, Image image) {
+        Car car = getByInventoryCode(inventoryCode);
+        List<Image> images = car.getImages();
+        images.add(image);
+        return carRepository.save(car);
     }
 
 

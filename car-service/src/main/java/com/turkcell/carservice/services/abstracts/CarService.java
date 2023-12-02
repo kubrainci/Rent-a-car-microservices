@@ -2,19 +2,22 @@ package com.turkcell.carservice.services.abstracts;
 
 import com.turkcell.carservice.entities.Car;
 import com.turkcell.carservice.entities.Image;
-import com.turkcell.carservice.entities.dtos.requests.CreateCarRequestDto;
+import com.turkcell.carservice.entities.dtos.requests.CarAddRequest;
+import com.turkcell.carservice.entities.dtos.responses.CarAddResponse;
+import com.turkcell.carservice.entities.dtos.responses.CarGetResponse;
+import com.turkcell.carservice.entities.dtos.responses.CarUpdateResponse;
 
 
 import java.util.List;
 
 public interface CarService {
-    void add(CreateCarRequestDto request);
+    CarAddResponse add(CarAddRequest request);
 
-    void update(String inventoryCode, CreateCarRequestDto request);
+    CarUpdateResponse update(String inventoryCode, CarAddRequest request);
 
     void delete(String inventoryCode);
 
-    List<Car> getAll();
+    List<CarGetResponse> getAll();
 
     Car getByInventoryCode(String inventoryCode);
 
@@ -25,4 +28,7 @@ public interface CarService {
     Double getDailyPriceByInventoryCode(String inventoryCode);
 
     Boolean updateState(String inventoryCode, Boolean state);
+
+    Car updateImageByInventoryCode(String inventoryCode, Image image);
+
 }
