@@ -1,9 +1,11 @@
 package com.turkcell.carservice.core.exceptions;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
@@ -31,5 +33,11 @@ public class GlobalExceptionHandlers {
         }
         return errors;
     }
-
+    @ExceptionHandler(BusinessException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleBusinessException(BusinessException businessException) {
+        return businessException.getMessage();
+    }
 }
+
+

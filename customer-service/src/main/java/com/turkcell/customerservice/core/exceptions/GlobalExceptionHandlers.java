@@ -38,6 +38,9 @@ public class GlobalExceptionHandlers {
         }
         return errors;
     }
-
-
+    @ExceptionHandler(BusinessException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleBusinessException(BusinessException businessException) {
+        return businessException.getMessage();
+    }
 }
