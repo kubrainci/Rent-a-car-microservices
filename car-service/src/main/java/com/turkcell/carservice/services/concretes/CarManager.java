@@ -1,5 +1,6 @@
 package com.turkcell.carservice.services.concretes;
 
+import com.turkcell.carservice.core.exceptions.BusinessException;
 import com.turkcell.carservice.entities.Car;
 import com.turkcell.carservice.entities.Image;
 import com.turkcell.carservice.entities.dtos.requests.CarAddRequest;
@@ -10,6 +11,8 @@ import com.turkcell.carservice.repositories.CarRepository;
 import com.turkcell.carservice.services.abstracts.CarService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,6 +24,7 @@ public class CarManager implements CarService {
 
     private final CarRepository carRepository;
     private final ModelMapper modelMapper;
+    private final MessageSource messageSource;
 
     @Override
     public CarAddResponse add(CarAddRequest request) {
@@ -100,5 +104,13 @@ public class CarManager implements CarService {
         return carRepository.save(car);
     }
 
+    private void checkIfCarExist(String inventoryCode) {
+        Car car = getByInventoryCode(inventoryCode);
+        if (car != null) {
+            throw new BusinessException(
+                    messageSource.getMessage(
+                            "checkIfCarExist", new Object[] {inventoryCode}, LocaleContextHolder.getLocale()));
+        }
+    }
 
 }
