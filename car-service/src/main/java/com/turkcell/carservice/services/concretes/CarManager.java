@@ -28,6 +28,7 @@ public class CarManager implements CarService {
 
     @Override
     public CarAddResponse add(CarAddRequest request) {
+        checkIfCarExist(request.getInventoryCode());
         Car carFromAutoMapping = modelMapper.map(request, Car.class);
         carFromAutoMapping = carRepository.save(carFromAutoMapping);
 
@@ -38,7 +39,7 @@ public class CarManager implements CarService {
 
     @Override
     public CarUpdateResponse update(String inventoryCode, CarAddRequest request) {
-        Car car = modelMapper.map(request, Car.class);
+        Car car = returnCarByInventoryCodeIfExist(inventoryCode);
         car.setDailyPrice(request.getDailyPrice());
         car.setImages(new ArrayList<>());
         car.setState(request.getState());
@@ -113,4 +114,14 @@ public class CarManager implements CarService {
         }
     }
 
+    private Car returnCarByInventoryCodeIfExist(String inventoryCode) {
+        Car car = getByInventoryCode(inventoryCode);
+        if (car == null)
+            throw new BusinessException(
+                    messageSource.getMessage(
+                            "carDoesNotExistWithGivenInventoryCode",
+                            new Object[] {inventoryCode},
+                            LocaleContextHolder.getLocale()));
+        return car;
+    }
 }

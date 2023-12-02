@@ -1,10 +1,10 @@
 package com.turkcell.carservice.services.abstracts;
 
-import com.turkcell.carservice.entities.ImageModel;
-import org.springframework.http.ResponseEntity;
-
-import java.util.Map;
+import com.turkcell.carservice.entities.dtos.requests.ImageAddRequest;
+import com.turkcell.carservice.entities.dtos.responses.ImageAddResponse;
 
 public interface ImageService {
-    ResponseEntity<Map> uploadImage(ImageModel imageModel, String inventoryCode);
+    ImageAddResponse uploadImage(ImageAddRequest imageAddRequest, String inventoryCode);
+
+
 }

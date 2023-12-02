@@ -9,6 +9,8 @@ import com.turkcell.rentalservice.repositories.RentalRepository;
 import com.turkcell.rentalservice.services.abstracts.RentalService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -24,6 +26,7 @@ public class RentalManager implements RentalService {
   private final RentalRepository rentalRepository;
   private final WebClient.Builder webClientBuilder;
   private final ModelMapper modelMapper;
+  private final MessageSource messageSource;
   private final KafkaTemplate<String, String> kafkaTemplate;
 
   public String submitRental(SubmitRentalDto submitRentalDto) {
@@ -50,12 +53,12 @@ public class RentalManager implements RentalService {
         sendNotification();
         // Kiralamayı kaydet
         rentalRepository.save(rental);
-        return ("Araba kiralandı");
+        return messageSource.getMessage("CarIsRented", null, LocaleContextHolder.getLocale());
       } else {
-        return ("Araba uygun değil");
+        return messageSource.getMessage("CarNotSuitable", null, LocaleContextHolder.getLocale());
       }
-    } catch (Exception e)  {
-      return ("Bir hata var")
+    } catch (Exception e) {
+      return messageSource.getMessage("ThereIsAError", null, LocaleContextHolder.getLocale())
               + e.getMessage();
     }
   }
@@ -63,7 +66,7 @@ public class RentalManager implements RentalService {
   private void sendNotification() {
     kafkaTemplate.send(
             "notificationTopic",
-           ("CarRentedMessage"));
+            messageSource.getMessage("CarRentedMessage", null, LocaleContextHolder.getLocale()));
   }
 
 

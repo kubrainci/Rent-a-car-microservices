@@ -1,5 +1,6 @@
 package com.turkcell.customerservice.services.concretes;
 
+import com.turkcell.customerservice.core.exceptions.BusinessException;
 import com.turkcell.customerservice.entities.Customer;
 import com.turkcell.customerservice.entities.requests.CustomerAddRequest;
 import com.turkcell.customerservice.entities.requests.CustomerUpdateRequest;
@@ -10,6 +11,8 @@ import com.turkcell.customerservice.repositories.CustomerRepository;
 import com.turkcell.customerservice.services.abstracts.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,9 +23,11 @@ public class CustomerManager implements CustomerService {
 
     private final CustomerRepository customerRepository;
     private final ModelMapper modelMapper;
+    private  final MessageSource messageSource;
 
     @Override
     public CustomerAddResponse register(CustomerAddRequest request) {
+        customerWithSameEmailShouldNotExist(request.getEmail());
         Customer customerForAutoMapping = modelMapper.map(request, Customer.class);
         customerForAutoMapping = customerRepository.save(customerForAutoMapping);
         CustomerAddResponse customerAddResponse =
@@ -81,6 +86,16 @@ public class CustomerManager implements CustomerService {
         customer.setBalance(customer.getBalance() - balance);
         customer = customerRepository.save(customer);
         return customer.getBalance();
+    }
+    private void customerWithSameEmailShouldNotExist(String email) {
+        // Aynı emaile sahip iki musteri olmamalı
+        Customer customerWithSameEmail = customerRepository.findByEmail(email);
+        if (customerWithSameEmail != null) {
+            // Business kuralı hatası
+            throw new BusinessException(
+                    messageSource.getMessage(
+                            "customerWithSameEmailShouldNotExist", null, LocaleContextHolder.getLocale()));
+        }
     }
 
 }

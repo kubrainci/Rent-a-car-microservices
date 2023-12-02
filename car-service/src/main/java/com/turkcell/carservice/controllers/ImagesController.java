@@ -1,6 +1,5 @@
 package com.turkcell.carservice.controllers;
 
-import com.turkcell.carservice.entities.ImageModel;
 import com.turkcell.carservice.repositories.ImageRepository;
 import com.turkcell.carservice.services.abstracts.ImageService;
 import lombok.RequiredArgsConstructor;
