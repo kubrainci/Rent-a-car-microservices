@@ -32,13 +32,15 @@ import java.util.List;
     return rentalService.update(id, request);
   }
 
-  @GetMapping
+  @GetMapping("/getById")
   public RentalGetResponse getById(int id){
+
     return rentalService.getById(id);
   }
 
-  @GetMapping
+  @GetMapping("/getAll")
   public List<RentalGetResponse> getAll(){
+
     return rentalService.getAll();
   }
 

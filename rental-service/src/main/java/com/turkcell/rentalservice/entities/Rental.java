@@ -19,8 +19,14 @@ public class Rental {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "rental_id")
     Integer rentalId;
+
     @Column(name = "rental_date")
     LocalDate rentalDate;
+
+    LocalDate endDate;
+
     @Column(name = "inventory_code")
     private String inventoryCode;
+
+    private int customerId;
 }
