@@ -1,5 +1,6 @@
 package com.turkcell.rentalservice.entities.dtos.requests;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,5 +15,6 @@ import java.time.LocalDate;
 public class RentalUpdateRequest {
 
     LocalDate rentalDate;
+    @NotNull(message = "inventoryCodeShouldNotBeLeftEmpty")
     private String inventoryCode;
 }
