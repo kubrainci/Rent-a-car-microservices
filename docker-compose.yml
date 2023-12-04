@@ -1,73 +1,99 @@
-# services:
-#  discovery-server:
-#    build: ./discovery-server
-#    ports:
-#      - 8761:8761
-#
-#  api-gateway:
-#    build: ./api-gateway
-#    ports:
-#      - 9999:9999
-#    environment:
-#      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
-#    depends_on:
-#      - discovery-server
-#
-#  car-service:
-#    build: ./car-service
-#    ports:
-#      - 6002:6002
-#    environment:
-#      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
-#      - spring.data.mongodb.uri=mongodb://root:root@mongodb:27017/car-service?authSource=admin
-#    depends_on:
-#      - discovery-server
-#      - mongodb
-#      - api-gateway
-#
-#  rental-service:
-#    build: ./rental-service
-#    ports:
-#      - 6001:6001
-#    environment:
-#      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
-#      - spring.datasource.url=jdbc:postgresql://postgres:5432/rental-service
-#    depends_on:
-#      - discovery-server
-#      - postgres
-#      - api-gateway
-#
-#  customer-service:
-#    build: ./customer-service
-#    ports:
-#      - 6003:6003
-#    environment:
-#      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
-#      - spring.datasource.url=jdbc:postgresql://postgres:5432/customer-service
-#    depends_on:
-#      - discovery-server
-#      - postgres
-#      - api-gateway
- services:
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak
+    ports:
+      - 8080:8080
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command:
+      - start-dev
+    volumes:
+      - C:\Users\inci4\Desktop\keycloak:/opt/keycloak/data
+
   mongodb:
     image: mongo
+    container_name: mongodb
     restart: always
     ports:
       - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - C:\Users\inci4\Desktop\mongodb:/data/db
 
   postgres:
     image: postgres
     restart: always
     environment:
-      POSTGRES_DB: rental-service
-      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 12345
-      POSTGRES_INITDB_ARGS: "--locale=en_US.utf8"
     ports:
       - 5432:5432
+    volumes:
+      - C:\Users\inci4\Desktop\postgres:/var/lib/postgresql/data
+
+  discovery-server:
+    build: ./discovery-server
+    ports:
+      - 8761:8761
+    environment:
+      - eureka.instance.prefer-ip-address= true
+    depends_on:
+      - keycloak
+
+  car-service:
+    build: ./car-service
+    ports:
+      - 6002:6002
+    environment:
+      - eureka.instance.prefer-ip-address=true
+      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
+      - spring.data.mongodb.uri=mongodb://root:root@mongodb:27017/car-service?authSource=admin
+    depends_on:
+      - discovery-server
+      - mongodb
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - 9999:9999
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    command: [ "./wait-for-it.sh", "car-service:6002" ]
+
+  rental-service:
+    build: ./rental-service
+    ports:
+      - 6001:6001
+    mem_limit: 700m
+    environment:
+      - eureka.instance.prefer-ip-address=true
+      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
+      - spring.datasource.url=jdbc:postgresql://postgres:5432/rental-service
+      - spring.kafka.bootstrap-servers=kafka:9092
+    depends_on:
+      - discovery-server
+      - postgres
+      - notification-service
+
+  customer-service:
+    build: ./customer-service
+    ports:
+      - 6003:6003
+    environment:
+      - eureka.instance.prefer-ip-address=true
+      - eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka
+      - spring.datasource.url=jdbc:postgresql://postgres:5432/customer-service
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - 6004:6004
+    environment:
+      - spring.kafka.bootstrap-servers=kafka:9092
+
+
 
   zookeeper:
     image: confluentinc/cp-zookeeper
