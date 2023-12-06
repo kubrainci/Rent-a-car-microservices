@@ -4,6 +4,7 @@
 
 The following services have been added to the base structure in the project:
 keycloak
+
 gateway
 Eureka (Service Discovery)
 Rental Service & PostgreSql
